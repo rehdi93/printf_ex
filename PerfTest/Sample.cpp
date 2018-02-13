@@ -15,6 +15,8 @@ using namespace std::chrono;
 using namespace KennyKerr;
 using namespace concurrency;
 
+namespace pfex = PrintF_ex;
+
 auto time_now() -> high_resolution_clock::time_point
 {
     return high_resolution_clock::now();
@@ -222,7 +224,8 @@ auto wmain(int argc, wchar_t ** argv) -> int
 	#elif TEST == 1
         printf("%s : %d\n", w.first.c_str(), w.second);
 	#elif TEST == 2
-		PrintF_ex::Printl("%s : %d", w.first, w.second);
+		//PrintF_ex::Printl("%s : %d", w.first, w.second);
+		pfex::Print("%s : %d", pfex::Endl("\n"), w.first, w.second);
 	#else
 	#error Invalid Test selection
 	#endif

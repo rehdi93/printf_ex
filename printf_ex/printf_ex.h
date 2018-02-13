@@ -22,7 +22,8 @@ namespace PrintF_ex
 			std::string tmp(format);
 			tmp += endl.value;
 
-			_printing(tmp.c_str(), args ...);
+			//_printing(tmp.c_str(), args ...);
+			printf_s(tmp.c_str(), Printable(args) ...);
 		}
 
 
@@ -32,7 +33,8 @@ namespace PrintF_ex
 			std::wstring tmp(format);
 			tmp += endl.value;
 
-			_printing(tmp.c_str(), args ...);
+			//_printing(tmp.c_str(), args ...);
+			wprintf_s(tmp.c_str(), Printable(args) ...);
 		}
 
 		template<typename ... Args>
@@ -53,39 +55,11 @@ namespace PrintF_ex
 	// Print - Wrappers around printf + some shortcuts
 	//
 
-	//template <typename ... Args>
-	//void Print(char const * const format,
-	//			Args const & ... args) noexcept
-	//{
-	//	details::_printing(format, args ...);
-	//}
-
-	//template <typename ... Args>
-	//void Print(wchar_t const * const format,
-	//			Args const & ... args) noexcept
-	//{
-	//	details::_printing(format, args ...);
-	//}
-
 	template <typename Tchar, class ... Args>
 	void Print(Tchar const * format, Args const & ... args)
 	{
 		details::_printing(format, args ...);
 	}
-
-	// Print a formated message w/ a custom end line
-	//template<class ... Args>
-	//void Print(char const * format, EndL_t<char> endl, Args const & ... args)
-	//{
-	//	details::_printing(format, endl, args...);
-	//}
-
-	// Print a formated message w/ a custom end line
-	//template<class ... Args>
-	//void Print(wchar_t const * format, EndL_t<wchar_t> endl, Args const & ... args)
-	//{
-	//	details::_printing(format, endl, args...);
-	//}
 
 	template<typename Tchar, class ... Args>
 	void Print(Tchar const * format, EndL_t<Tchar> endl, Args const & ... args)
@@ -98,7 +72,6 @@ namespace PrintF_ex
 		Print("%s", value);
 	}
 
-	// Print a message w/ a custom end line
 	inline void Print(char const * value, EndL_t<char> const endl)
 	{
 		details::_printing("%s", endl, value);
@@ -109,7 +82,6 @@ namespace PrintF_ex
 		Print(L"%s", value);
 	}
 
-	// Print a message w/ a custom end line
 	inline void Print(wchar_t const * value, EndL_t<wchar_t> const endl)
 	{
 		details::_printing(L"%s", endl, value);
@@ -166,7 +138,8 @@ namespace PrintF_ex
 	void Printl(std::basic_string<Tchar> const & format,
 				Args const & ... args)
 	{
-		Printl(format.c_str(), args ...);
+		//Printl(format.c_str(), args ...);
+		details::_printing(format.c_str(), args ...);
 	}
 
 	inline void Printl(wchar_t const * const value) noexcept
