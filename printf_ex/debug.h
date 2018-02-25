@@ -1,15 +1,17 @@
 #pragma once
+// Printf_ex debug header
+
 
 #ifdef _DEBUG
 #include <crtdbg.h>
 #endif // _DEBUG
 
 #ifdef _DEBUG
-#define ASSERT _ASSERTE
-#define VERIFY ASSERT
-#define VERIFY_(result, expression) ASSERT(result == expression)
+#define PF_ASSERT _ASSERTE
+#define PF_VERIFY PF_ASSERT
+#define PF_VERIFY_(result, expression) PF_ASSERT(result == expression)
 #else
-#define ASSERT __noop
-#define VERIFY(expression) (expression)
-#define VERIFY_(result, expression) (expression)
+#define PF_ASSERT __noop
+#define PF_VERIFY(expression) (expression)
+#define PF_VERIFY_(result, expression) (expression)
 #endif // _DEBUG

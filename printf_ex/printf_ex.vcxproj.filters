@@ -3,8 +3,6 @@
   <ItemGroup>
     <ClInclude Include="printf_ex.h" />
     <ClInclude Include="debug.h" />
-    <ClInclude Include="format.h" />
-    <ClInclude Include="to_string.h" />
     <ClInclude Include="printtypes.h" />
   </ItemGroup>
 </Project>

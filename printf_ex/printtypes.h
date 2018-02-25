@@ -1,4 +1,6 @@
 #pragma once
+// Printf_ex types
+
 #include <string>
 
 namespace PrintF_ex
@@ -26,13 +28,13 @@ namespace PrintF_ex
 }
 
 template<typename TVal>
-TVal Printable(TVal value) noexcept
+TVal PrintArg(TVal value) noexcept
 {
 	return value;
 }
 
 template<typename Tchar>
-Tchar const * Printable(std::basic_string<Tchar> const & value) noexcept
+Tchar const * PrintArg(std::basic_string<Tchar> const & value) noexcept
 {
 	return value.c_str();
 }
