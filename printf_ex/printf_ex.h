@@ -1,7 +1,6 @@
 #pragma once
-// Part of: Printf_ex
-// Copyright 2018-present Pedro Oliva Rodriges
-// This code is released under the MIT licence
+// Printf_ex main header
+// made by: Pedro Oliva Rodriges
 
 // ref: https://msdn.microsoft.com/magazine/dn913181
 
@@ -12,7 +11,7 @@
 #include "printtypes.h"
 
 
-namespace PrintF_ex
+namespace Red
 {
 	namespace details
 	{
@@ -25,7 +24,6 @@ namespace PrintF_ex
 
 			printf_s(tmp.c_str(), PrintArg(args) ...);
 		}
-
 
 		template<typename ... Args>
 		void _printing(wchar_t const * format, EndL_t<wchar_t> endl, Args const & ... args)
@@ -59,11 +57,22 @@ namespace PrintF_ex
 		template<typename ... Args>
 		int _printing_buffer(wchar_t * const buffer, size_t const bufferLen, wchar_t const * const format, Args const & ... args) noexcept
 		{
-			int const result = _snwprintf(buffer, bufferLen, format, PrintArg(args) ...);
+			int const result = swprintf(buffer, bufferLen, format, PrintArg(args) ...);
 			PF_ASSERT(-1 != result);
 			return result;
 		}
 
+		template<typename ... Args>
+		size_t _get_required_size(char const * format, Args const & ... args)
+		{
+			return _scprintf(format, PrintArg(args) ...);
+		}
+
+		template<typename ... Args>
+		size_t _get_required_size(wchar_t const * format, Args const & ... args)
+		{
+			return _scwprintf(format, PrintArg(args) ...);
+		}
 	}
 
 	//
@@ -206,6 +215,11 @@ namespace PrintF_ex
 									 buffer.size() + 1,
 									 format,
 									 args ...);
+
+		/*size_t const requiredSize = details::_get_required_size(format, args...);
+		buffer.resize(requiredSize);
+		PrintStr(&buffer[0], buffer.size() + 1, format, args...);*/
+
 		// resize if needed
 		if (size > buffer.size())
 		{
@@ -218,6 +232,7 @@ namespace PrintF_ex
 		}
 
 		return size;
+		//return buffer.size();
 	}
 
 	//
@@ -227,35 +242,41 @@ namespace PrintF_ex
 	// Converts a null-terminated wchar_t* string to a std::string
 	inline std::string ToString(wchar_t const * value, size_t const size)
 	{
-		size_t n = 0;
+		size_t n{};
 		// duplicate the size to compensate for multibyte chars.
 		auto const destSize = size * 2;
 		std::string tmp(destSize, 'f');
 		wcstombs_s(&n, &tmp[0], destSize, value, destSize - 1);
 		tmp.resize(n);
+		if (!tmp.back()) // remove extrainious null terminator
+			tmp.pop_back();
 		return tmp;
 	}
 
-	// Converts a null-terminated wchar_t * string to a std::string
-	inline std::string ToString(wchar_t const * value)
+	// Converts a null-terminated wchar_t* string to a std::string
+	template<size_t _StrLen>
+	inline std::string ToString(wchar_t const (&value)[_StrLen])
 	{
-		return ToString(value, wcslen(value) + 1);
+		return ToString(value, _StrLen);
 	}
 
-	// Converts a null-terminated char * string to a std::wstring
+	// Converts a null-terminated char* string to a std::wstring
 	inline std::wstring ToString(char const * value, size_t const size)
 	{
-		size_t n = 0;
+		size_t n{};
 		std::wstring tmp(size, L'f');
 		mbstowcs_s(&n, &tmp[0], size, value, size - 1);
 		tmp.resize(n);
+		if (!tmp.back()) // remove extrainious null terminator
+			tmp.pop_back();
 		return tmp;
 	}
 
-	// Converts a null-terminated char * string to a std::wstring
-	inline std::wstring ToString(char const * value)
+	// Converts a null-terminated char* string to a std::wstring
+	template<size_t _StrLen>
+	inline std::wstring ToString(char const (&value)[_StrLen])
 	{
-		return ToString(value, strlen(value) + 1);
+		return ToString(value, _StrLen);
 	}
 
 	// Returns a string representation of a given double or float value

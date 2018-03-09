@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace PrintF_ex
+namespace Red
 {
 	template<class Tchar>
 	struct EndL_t

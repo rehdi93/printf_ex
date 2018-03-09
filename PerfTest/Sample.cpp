@@ -2,20 +2,21 @@
 #include "..\printf_ex\printf_ex.h"
 
 /*
- Writing perf test
+ Writing performance test
 
  0 = std::cout
  1 = printf
- 2 = Printf_ex::Printl
+ 2 = Red::Print
 */
 #define TEST 2
 
-using namespace std;
+//using namespace std;
+using std::string;
+using std::unordered_map;
 using namespace std::chrono;
 using namespace KennyKerr;
 using namespace concurrency;
-
-namespace pfex = PrintF_ex;
+using namespace Red;
 
 auto time_now() -> high_resolution_clock::time_point
 {
@@ -214,6 +215,8 @@ auto wmain(int argc, wchar_t ** argv) -> int
 	string selection{ "printf: \n" };
 #elif TEST == 2
 	string selection{ "PrintF_ex: \n" };
+#else
+#error Invalid Test selection
 #endif
 
     for (auto const & w : *result)
@@ -225,13 +228,11 @@ auto wmain(int argc, wchar_t ** argv) -> int
         printf("%s : %d\n", w.first.c_str(), w.second);
 	#elif TEST == 2
 		//PrintF_ex::Printl("%s : %d", w.first, w.second);
-		pfex::Print("%s : %d", pfex::Endl("\n"), w.first, w.second);
-	#else
-	#error Invalid Test selection
+		Print("%s : %d", Endl("\n"), w.first, w.second);
 	#endif
 
     }
 
-    cout << endl << selection << "Words: " << result->size() 
-         << " Seconds: " << time_elapsed(start) << endl;
+    std::cout << std::endl << selection << "Words: " << result->size()
+         << " Seconds: " << time_elapsed(start) << std::endl;
 }
