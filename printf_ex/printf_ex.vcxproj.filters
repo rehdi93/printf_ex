@@ -3,6 +3,7 @@
   <ItemGroup>
     <ClInclude Include="printf_ex.h" />
     <ClInclude Include="debug.h" />
-    <ClInclude Include="printtypes.h" />
+    <ClInclude Include="printf_ex_details.h" />
+    <ClInclude Include="printf_ex_types.h" />
   </ItemGroup>
 </Project>

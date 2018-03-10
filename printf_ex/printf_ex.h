@@ -7,89 +7,25 @@
 #include <cstdio>
 #include <string>
 #include <type_traits>
+#include "printf_ex_details.h"
 #include "debug.h"
-#include "printtypes.h"
 
 
 namespace Red
 {
-	namespace details
-	{
-
-		template<typename ... Args>
-		void _printing(char const * format, EndL_t<char> endl, Args const & ... args)
-		{
-			std::string tmp(format);
-			tmp += endl.value;
-
-			printf_s(tmp.c_str(), PrintArg(args) ...);
-		}
-
-		template<typename ... Args>
-		void _printing(wchar_t const * format, EndL_t<wchar_t> endl, Args const & ... args)
-		{
-			std::wstring tmp(format);
-			tmp += endl.value;
-
-			wprintf_s(tmp.c_str(), PrintArg(args) ...);
-		}
-
-		template<typename ... Args>
-		void _printing(char const * format, Args const & ... args)
-		{
-			printf_s(format, PrintArg(args) ...);
-		}
-
-		template<typename ... Args>
-		void _printing(wchar_t const * format, Args const & ... args)
-		{
-			wprintf_s(format, PrintArg(args) ...);
-		}
-
-		template<typename ... Args>
-		int _printing_buffer(char * const buffer, size_t const bufferLen, char const * const format, Args const & ... args) noexcept
-		{
-			int const result = snprintf(buffer, bufferLen, format, PrintArg(args) ...);
-			PF_ASSERT(-1 != result);
-			return result;
-		}
-
-		template<typename ... Args>
-		int _printing_buffer(wchar_t * const buffer, size_t const bufferLen, wchar_t const * const format, Args const & ... args) noexcept
-		{
-			int result = swprintf(buffer, bufferLen, format, PrintArg(args)...);
-
-			if (result == -1)
-			{
-				// JANK AF :SADFACE:
-				// keep trying to format until it doesn't truncate
-				auto allc = wcslen(format) + 1;
-				do
-				{
-					wchar_t * tmp = new wchar_t[allc *= 2];
-					result = swprintf(tmp, allc, format, PrintArg(args)...);
-					delete[] tmp;
-				} while (result == -1);
-			}
-
-			PF_ASSERT(-1 != result);
-			return result;
-		}
-
-	}
 
 	//
 	// Print - Wrappers around printf + some shortcuts
 	//
 
 	template <typename Tchar, class ... Args>
-	void Print(Tchar const * format, Args const & ... args)
+	void Print(Tchar const * format, Args const & ... args) noexcept
 	{
 		details::_printing(format, args ...);
 	}
 
 	template<typename Tchar, class ... Args>
-	void Print(Tchar const * format, EndL_t<Tchar> endl, Args const & ... args)
+	void Print(Tchar const * format, EndL_t<Tchar> endl, Args const & ... args) noexcept
 	{
 		details::_printing(format, endl, args ...);
 	}
@@ -99,9 +35,9 @@ namespace Red
 		Print("%s", value);
 	}
 
-	inline void Print(char const * value, EndL_t<char> const endl)
+	inline void Print(char const * value, EndL_t<char> const endl) noexcept
 	{
-		details::_printing("%s", endl, value);
+		Print("%s", endl, value);
 	}
 
 	inline void Print(wchar_t const * const value) noexcept
@@ -109,9 +45,9 @@ namespace Red
 		Print(L"%s", value);
 	}
 
-	inline void Print(wchar_t const * value, EndL_t<wchar_t> const endl)
+	inline void Print(wchar_t const * value, EndL_t<wchar_t> const endl) noexcept
 	{
-		details::_printing(L"%s", endl, value);
+		Print(L"%s", endl, value);
 	}
 
 
@@ -122,14 +58,14 @@ namespace Red
 	}
 
 	template<class Tchar, class ... Args>
-	void Print(std::basic_string<Tchar> const & format, Args const & ... args)
+	void Print(std::basic_string<Tchar> const & format, Args const & ... args) noexcept
 	{
 		Print(format.c_str(), args ...);
 	}
 
 	template<class Tchar, class ... Args>
 	void Print(std::basic_string<Tchar> const & format, EndL_t<Tchar> endl, 
-			   Args const & ... args)
+			   Args const & ... args) noexcept
 	{
 		Print(format.c_str(), endl, args ...);
 	}
@@ -159,7 +95,7 @@ namespace Red
 	}
 
 	template<class Tchar, class ... Args>
-	void Printl(std::basic_string<Tchar> const & format, Args const & ... args)
+	void Printl(std::basic_string<Tchar> const & format, Args const & ... args) noexcept
 	{
 		if (std::is_same<Tchar, char>())
 			details::_printing(format.c_str(), EndL_t<char>("\n"), args ...);
@@ -185,51 +121,45 @@ namespace Red
 	}
 
 	//
-	// PrintStr - Build formated text to a buffer
-	// All overloads returns the N# of chars written
+	// Format... - Build formated text
 	//
 
 	// Write a formated message to a buffer
 	template <typename Tchar, typename ... Args>
-	int PrintStr(Tchar * const buffer, 
-				 size_t const bufferCount,
-				 Tchar const * const format,
-				 Args const & ... args) noexcept
+	int FormatBuffer(Tchar * const buffer, size_t const bufferCount,
+					 Tchar const * const format, Args const & ... args)
 	{
-		return details::_printing_buffer(buffer, bufferCount, format, args ...);
-	}
-
-	// Write a formated message to a buffer
-	template <typename Tchar, size_t _BufferSize, typename ... Args>
-	int PrintStr(Tchar * const (&buffer)[_BufferSize],
-				 Tchar const * const format,
-				 Args const & ... args) noexcept
-	{
-		return details::_printing_buffer(buffer, _BufferSize, format, args ...);
+		int const result = details::unsafe_format_buffer(buffer, bufferCount,
+														 format, args...);
+		details::ensure_valid_fmt_result(result);
+		return result;
 	}
 
 	// Write a formated message to a string
 	template <typename Tchar, typename ... Args>
-	int PrintStr(std::basic_string<Tchar> & buffer,
-				 Tchar const * const format,
-				 Args const & ... args)
+	int FormatString(std::basic_string<Tchar> & buffer,
+					 Tchar const * const format, Args const & ... args)
 	{
-		size_t const size = PrintStr(&buffer[0],
-									 buffer.size() + 1,
-									 format,
-									 args ...);
+		int size = details::unsafe_format_buffer(&buffer[0], buffer.size() + 1, 
+												 format, args ...);
+		
+		if (size == -1)
+		{
+			size = details::get_required_size(format, args ...);
+		}
 
-		// resize if needed
+		details::ensure_valid_fmt_result(size);
+
 		if (size > buffer.size())
 		{
 			buffer.resize(size);
-			PrintStr(&buffer[0], buffer.size() + 1, format, args ...);
+			FormatBuffer(&buffer[0], buffer.size() + 1, format, args ...);
 		}
 		else if (size < buffer.size())
 		{
 			buffer.resize(size);
 		}
-
+		
 		return size;
 	}
 
@@ -240,11 +170,11 @@ namespace Red
 	// Converts a null-terminated wchar_t* string to a std::string
 	inline std::string ToString(wchar_t const * value)
 	{
-		size_t n{}, size = wcslen(value) + 1;
+		size_t n {};
 		// duplicate the size to compensate for multibyte chars.
-		auto const destSize = size * 2;
-		std::string tmp(destSize, 'f');
-		wcstombs_s(&n, &tmp[0], destSize, value, destSize - 1);
+		size_t size = (wcslen(value) + 1) * 2;
+		std::string tmp(size, 'f');
+		wcstombs_s(&n, &tmp[0], size, value, size - 1);
 		tmp.resize(n);
 		tmp.pop_back(); // remove extrainious null terminator
 		return tmp;
@@ -253,7 +183,8 @@ namespace Red
 	// Converts a null-terminated char* string to a std::wstring
 	inline std::wstring ToString(char const * value)
 	{
-		size_t n{}, size = strlen(value) + 1;
+		size_t n {};
+		size_t size = strlen(value) + 1;
 		std::wstring tmp(size, L'f');
 		mbstowcs_s(&n, &tmp[0], size, value, size - 1);
 		tmp.resize(n);
@@ -265,7 +196,7 @@ namespace Red
 	std::string ToString(float const value, unsigned const precision)
 	{
 		std::string result;
-		PrintStr(result, "%.*f", precision, value);
+		FormatString(result, "%.*f", precision, value);
 		return result;
 	}
 
@@ -273,9 +204,10 @@ namespace Red
 	std::string ToString(double const value, unsigned const precision)
 	{
 		std::string result;
-		PrintStr(result, "%.*f", precision, value);
+		FormatString(result, "%.*f", precision, value);
 		return result;
 	}
+
 }
 
 
