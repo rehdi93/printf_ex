@@ -31,7 +31,7 @@ basic_string<Tchar> BufferToStr(Uchar const * value, size_t const len, Conversio
 	PF_ASSERT(value);
 	size_t n{};
 	basic_string<Tchar> result(len, 0);
-	convert(&n, &result[0], len, value, len - 1);
+	PF_VERIFY_(0, convert(&n, &result[0], len, value, len - 1));
 	result.resize(n);
 	result.pop_back(); // remove extra null terminator
 	return result;
@@ -45,8 +45,8 @@ wstring Red::ToWideString(char const * value)
 
 string Red::ToString(wchar_t const * value)
 {
-	// duplicate the size to compensate for multibyte chars.
-	return BufferToStr<char>(value, (wcslen(value) + 1) * 2, wcstombs_s);
+	// make sure to pass the size in BYTES.
+	return BufferToStr<char>(value, (wcslen(value) + 1) * sizeof(wchar_t), wcstombs_s);
 }
 
 

@@ -55,6 +55,7 @@ namespace details {
 		return swprintf(buffer, bufferLen, format, PrintArg(args) ...);
 	}
 
+#ifdef _MSC_VER 
 	template<typename ... Args>
 	int get_required_size(wchar_t const * const format, Args const & ... args) noexcept
 	{
@@ -66,6 +67,38 @@ namespace details {
 	{
 		return _scprintf(format, PrintArg(args) ...);
 	}
+#else
+	template<typename ... Args>
+	int get_required_size(char const * const format, Args const & ... args) noexcept
+	{
+		return snprintf(nullptr, 0, format, PrintArg(args) ...);
+	}
+
+	// sadly, there is no standard wide char alternative to snprintf for wide chars, so I made my own
+	template<typename ... Args>
+	int get_required_size(wchar_t const * const format, Args const & ... args)
+	{
+		int result = -1;
+
+		for (size_t i = 1, dummySize = 256, increment = 64;
+			 result == -1;
+			 dummySize += increment)
+		{
+			if (i % 10 == 0)
+			{
+				increment *= 2;
+			}
+
+			wchar_t * dummy = new wchar_t[dummySize];
+			result = swprintf(dummy, dummySize, format, PrintArg(args) ...);
+			delete[] dummy;
+		}
+
+		return result;
+	}
+#endif // _MSC_VER 
+
+
 
 	inline void ensure_valid_fmt_result(int fmtResult)
 	{
