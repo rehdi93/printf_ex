@@ -20,6 +20,10 @@ namespace Red
 		{
 		}
 
+		auto operator() () const
+		{
+			return value;
+		}
 	};
 
 	using Endl = EndL_t<char>;

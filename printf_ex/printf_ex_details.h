@@ -15,7 +15,7 @@ namespace details {
 	void _printing(char const * format, EndL_t<char> endl, Args const & ... args)
 	{
 		std::string tmp(format);
-		tmp += endl.value;
+		tmp += endl();
 
 		printf_s(tmp.c_str(), PrintArg(args) ...);
 	}
@@ -24,7 +24,7 @@ namespace details {
 	void _printing(wchar_t const * format, EndL_t<wchar_t> endl, Args const & ... args)
 	{
 		std::wstring tmp(format);
-		tmp += endl.value;
+		tmp += endl();
 
 		wprintf_s(tmp.c_str(), PrintArg(args) ...);
 	}
@@ -64,7 +64,7 @@ namespace details {
 	template<typename ... Args>
 	int get_required_size(char const * const format, Args const & ... args) noexcept
 	{
-		return _scprintf(format, PrintArg(args)...);
+		return _scprintf(format, PrintArg(args) ...);
 	}
 
 	inline void ensure_valid_fmt_result(int fmtResult)

@@ -135,6 +135,13 @@ namespace Red
 		return result;
 	}
 
+	template <typename Tchar, size_t _BufferSize, typename ... Args>
+	int FormatBuffer(Tchar const (&buffer)[_BufferSize],
+					 Tchar const * const format, Args const & ... args)
+	{
+		return FormatBuffer(buffer, _BufferSize, format, args ...);
+	}
+
 	// Write a formated message to a string
 	template <typename Tchar, typename ... Args>
 	int FormatString(std::basic_string<Tchar> & buffer,
@@ -150,12 +157,12 @@ namespace Red
 
 		details::ensure_valid_fmt_result(size);
 
-		if (size > buffer.size())
+		if (static_cast<size_t>(size)> buffer.size())
 		{
 			buffer.resize(size);
 			FormatBuffer(&buffer[0], buffer.size() + 1, format, args ...);
 		}
-		else if (size < buffer.size())
+		else if (static_cast<size_t>(size) < buffer.size())
 		{
 			buffer.resize(size);
 		}
@@ -168,45 +175,19 @@ namespace Red
 	//
 
 	// Converts a null-terminated wchar_t* string to a std::string
-	inline std::string ToString(wchar_t const * value)
-	{
-		size_t n {};
-		// duplicate the size to compensate for multibyte chars.
-		size_t size = (wcslen(value) + 1) * 2;
-		std::string tmp(size, 'f');
-		wcstombs_s(&n, &tmp[0], size, value, size - 1);
-		tmp.resize(n);
-		tmp.pop_back(); // remove extrainious null terminator
-		return tmp;
-	}
+	std::string ToString(wchar_t const * value);
 
 	// Converts a null-terminated char* string to a std::wstring
-	inline std::wstring ToString(char const * value)
-	{
-		size_t n {};
-		size_t size = strlen(value) + 1;
-		std::wstring tmp(size, L'f');
-		mbstowcs_s(&n, &tmp[0], size, value, size - 1);
-		tmp.resize(n);
-		tmp.pop_back(); // remove extrainious null terminator
-		return tmp;
-	}
+	std::wstring ToWideString(char const * value);
 
-	// Returns a string representation of a given double or float value
-	std::string ToString(float const value, unsigned const precision)
-	{
-		std::string result;
-		FormatString(result, "%.*f", precision, value);
-		return result;
-	}
 
-	// Returns a string representation of a given double or float value
-	std::string ToString(double const value, unsigned const precision)
-	{
-		std::string result;
-		FormatString(result, "%.*f", precision, value);
-		return result;
-	}
+	std::string ToString(float const value, unsigned const precision);
+
+	std::string ToString(double const value, unsigned const precision);
+
+	std::wstring ToWideString(float const value, unsigned const precision);
+
+	std::wstring ToWideString(double const value, unsigned const precision);
 
 }
 
