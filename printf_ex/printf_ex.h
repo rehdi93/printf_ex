@@ -25,7 +25,7 @@ namespace Red
 	}
 
 	template<typename Tchar, class ... Args>
-	void Print(Tchar const * format, EndL_t<Tchar> endl, Args const & ... args) noexcept
+	void Print(Tchar const * format, EndL_t<Tchar> const & endl, Args const & ... args) noexcept
 	{
 		details::_printing(format, endl, args ...);
 	}
@@ -35,7 +35,7 @@ namespace Red
 		Print("%s", value);
 	}
 
-	inline void Print(char const * value, EndL_t<char> const endl) noexcept
+	inline void Print(char const * value, EndL_t<char> const & endl) noexcept
 	{
 		Print("%s", endl, value);
 	}
@@ -45,7 +45,7 @@ namespace Red
 		Print(L"%s", value);
 	}
 
-	inline void Print(wchar_t const * value, EndL_t<wchar_t> const endl) noexcept
+	inline void Print(wchar_t const * value, EndL_t<wchar_t> const & endl) noexcept
 	{
 		Print(L"%s", endl, value);
 	}
@@ -64,7 +64,7 @@ namespace Red
 	}
 
 	template<class Tchar, class ... Args>
-	void Print(std::basic_string<Tchar> const & format, EndL_t<Tchar> endl, 
+	void Print(std::basic_string<Tchar> const & format, EndL_t<Tchar> const & endl,
 			   Args const & ... args) noexcept
 	{
 		Print(format.c_str(), endl, args ...);
