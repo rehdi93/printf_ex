@@ -21,43 +21,32 @@ auto NumToWideStr(Tnum const value, unsigned const precision)
 	Red::FormatString(result, L"%.*f", precision, value);
 	return result;
 }
-//
-//template<class Tchar, class Uchar, class UtoTFunc>
-//basic_string<Tchar> BufferToStr(Uchar const * value, size_t const len, UtoTFunc convert)
-//{
-//	PF_ASSERT(value);
-//	size_t n{};
-//	basic_string<Tchar> result(len, 0);
-//	convert(&n, &result[0], len, value, len - 1);
-//	result.resize(n);
-//	result.pop_back(); // remove extra null terminator
-//	return restr
-//}
+
+template<class Tchar, class Uchar>
+using ConversionHandler = errno_t (*)(size_t *, Tchar*, size_t const, Uchar const * const, size_t);
+
+template<class Tchar, class Uchar>
+basic_string<Tchar> BufferToStr(Uchar const * value, size_t const len, ConversionHandler<Tchar, Uchar> convert)
+{
+	PF_ASSERT(value);
+	size_t n{};
+	basic_string<Tchar> result(len, 0);
+	convert(&n, &result[0], len, value, len - 1);
+	result.resize(n);
+	result.pop_back(); // remove extra null terminator
+	return result;
+}
 
 
 wstring Red::ToWideString(char const * value)
 {
-	PF_ASSERT(value);
-	size_t n{};
-	size_t size = strlen(value) + 1;
-	wstring tmp(size, L'f');
-	mbstowcs_s(&n, &tmp[0], size, value, size - 1);
-	tmp.resize(n);
-	tmp.pop_back(); // remove extrainious null terminator
-	return tmp;
+	return BufferToStr<wchar_t>(value, strlen(value) + 1, mbstowcs_s);
 }
 
 string Red::ToString(wchar_t const * value)
 {
-	PF_ASSERT(value);
-	size_t n{};
 	// duplicate the size to compensate for multibyte chars.
-	size_t size = (wcslen(value) + 1) * 2;
-	string tmp(size, 'f');
-	wcstombs_s(&n, &tmp[0], size, value, size - 1);
-	tmp.resize(n);
-	tmp.pop_back(); // remove extrainious null terminator
-	return tmp;
+	return BufferToStr<char>(value, (wcslen(value) + 1) * 2, wcstombs_s);
 }
 
 
