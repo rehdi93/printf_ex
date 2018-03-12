@@ -7,6 +7,10 @@
 #include "debug.h"
 #include "printf_ex_types.h"
 
+#ifndef _MSC_VER
+#include <string.h>
+#endif // !_MSC_VER
+
 
 namespace Red {
 namespace details {
@@ -17,7 +21,7 @@ namespace details {
 		std::string tmp(format);
 		tmp += endl();
 
-		printf_s(tmp.c_str(), PrintArg(args) ...);
+		printf(tmp.c_str(), PrintArg(args) ...);
 	}
 
 	template<typename ... Args>
@@ -26,19 +30,19 @@ namespace details {
 		std::wstring tmp(format);
 		tmp += endl();
 
-		wprintf_s(tmp.c_str(), PrintArg(args) ...);
+		wprintf(tmp.c_str(), PrintArg(args) ...);
 	}
 
 	template<typename ... Args>
 	void _printing(char const * format, Args const & ... args)
 	{
-		printf_s(format, PrintArg(args) ...);
+		printf(format, PrintArg(args) ...);
 	}
 
 	template<typename ... Args>
 	void _printing(wchar_t const * format, Args const & ... args)
 	{
-		wprintf_s(format, PrintArg(args) ...);
+		wprintf(format, PrintArg(args) ...);
 	}
 
 	template<typename ... Args>
@@ -102,7 +106,6 @@ namespace details {
 
 	inline void ensure_valid_fmt_result(int fmtResult)
 	{
-		PF_ASSERT(fmtResult != -1);
 		if (fmtResult == -1)
 		{
 			throw std::runtime_error("Failed to format buffer, check your arguments.");

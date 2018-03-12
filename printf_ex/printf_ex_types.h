@@ -11,14 +11,11 @@ namespace Red
 		std::basic_string<Tchar> value;
 
 		EndL_t(Tchar const * _c)
-			: value{ _c }
-		{
-		}
+			: value{ _c } {}
 
 		EndL_t(Tchar const _c, unsigned count)
-			: value(count, _c)
-		{
-		}
+			: value(count, _c) {}
+
 
 		auto operator() () const
 		{
@@ -39,6 +36,8 @@ namespace Red
 		return wEndl(L'\n', newLines);
 	}
 }
+
+
 
 template<typename TVal>
 TVal PrintArg(TVal value) noexcept

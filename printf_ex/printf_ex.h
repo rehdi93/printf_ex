@@ -42,12 +42,12 @@ namespace Red
 
 	inline void Print(wchar_t const * const value) noexcept
 	{
-		Print(L"%s", value);
+		Print(L"%ls", value);
 	}
 
 	inline void Print(wchar_t const * value, EndL_t<wchar_t> const & endl) noexcept
 	{
-		Print(L"%s", endl, value);
+		Print(L"%ls", endl, value);
 	}
 
 
@@ -71,27 +71,29 @@ namespace Red
 	}
 
 	//
-	// Printl - Same as Print, but adds a new line at the end
+	// Printl - Shorthand for writing a message and adding a new line at the end
 	//
 
-	template <typename ... Args, size_t _FmtSize>
-	void Printl(char const (&format)[_FmtSize], Args const & ... args) noexcept
+	template <typename ... Args>
+	void Printl(char const * format, Args const & ... args) noexcept
 	{
-		char tmp[_FmtSize + 1];
-		strcpy_s(tmp, format);
-		strcat_s(tmp, "\n");
+		//char tmp[_FmtSize + 2];
+		//strcpy_s(tmp, format);
+		//strcat_s(tmp, "\n");
+		//details::_printing(tmp, args ...);
 
-		details::_printing(tmp, args ...);
+		Print(format, args...); Print("\n");
 	}
 
-	template <typename ... Args, size_t _FmtSize>
-	void Printl(wchar_t const (&format)[_FmtSize], Args const & ... args) noexcept
+	template <typename ... Args>
+	void Printl(wchar_t const * format, Args const & ... args) noexcept
 	{
-		wchar_t tmp[_FmtSize + 1];
+		/*wchar_t tmp[_FmtSize + 2];
 		wcscpy_s(tmp, format);
 		wcscat_s(tmp, L"\n");
-
-		details::_printing(tmp, args ...);
+		details::_printing(tmp, args ...);*/
+		
+		Print(format, args...); Print(L"\n");
 	}
 
 	template<class Tchar, class ... Args>
@@ -106,7 +108,7 @@ namespace Red
 
 	inline void Printl(wchar_t const * const value) noexcept
 	{
-		Print(L"%s\n", value);
+		Print(L"%ls\n", value);
 	}
 
 	inline void Printl(char const * const value) noexcept
@@ -131,7 +133,9 @@ namespace Red
 	{
 		int const result = details::unsafe_format_buffer(buffer, bufferCount,
 														 format, args...);
+		PF_ASSERT(result != -1);
 		details::ensure_valid_fmt_result(result);
+
 		return result;
 	}
 
@@ -155,9 +159,10 @@ namespace Red
 			size = details::get_required_size(format, args ...);
 		}
 
+		PF_ASSERT(size != -1);
 		details::ensure_valid_fmt_result(size);
 
-		if (static_cast<size_t>(size)> buffer.size())
+		if (static_cast<size_t>(size) > buffer.size())
 		{
 			buffer.resize(size);
 			FormatBuffer(&buffer[0], buffer.size() + 1, format, args ...);
