@@ -50,7 +50,7 @@ string Red::ToString(wchar_t const * value)
 	return BufferToStr<char>(value, (wcslen(value) + 1) * sizeof(wchar_t), wcstombs_s);
 }
 
-#else
+#else // not working on GCC
 wstring Red::ToWideString(char const * value)
 {
 	PF_ASSERT(value);

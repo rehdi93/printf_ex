@@ -18,7 +18,7 @@
 
 #else
 #ifndef _MSC_VER
-#define __noop ((void)0)
+	#define __noop ((void)0)
 #endif // !_MSC_VER
 
 	#define PF_ASSERT __noop
