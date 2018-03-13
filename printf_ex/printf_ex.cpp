@@ -23,6 +23,7 @@ auto NumToWideStr(Tnum const value, unsigned const precision)
 }
 
 
+
 #ifdef _MSC_VER
 template<class Tchar, class Uchar>
 using ConversionHandler = errno_t (*)(size_t *, Tchar*, size_t const, Uchar const * const, size_t);
@@ -49,34 +50,40 @@ string Red::ToString(wchar_t const * value)
 	// make sure to pass the size in BYTES.
 	return BufferToStr<char>(value, (wcslen(value) + 1) * sizeof(wchar_t), wcstombs_s);
 }
+#endif // _MSC_VER
 
-#else // not working on GCC
+#ifdef __GNUG__
+
+template<class I, class E, class S>
+struct codecvt : public std::codecvt<I, E, S>
+{
+	~codecvt() {}
+};
+
+using StrConverter = std::wstring_convert<codecvt<wchar_t, char, std::mbstate_t>>;
+
+
 wstring Red::ToWideString(char const * value)
 {
 	PF_ASSERT(value);
-	size_t len = strlen(value);
-	auto result = wstring(len+1, L'_');
-	//PF_VERIFY_N((size_t)-1, mbstowcs(&result[0], value, len));
-	PF_VERIFY_N(-1, details::unsafe_format_buffer(&result[0], result.size(), L"%s", value));
-	if (!result.back()) result.pop_back();
+
+	StrConverter conv16;
+	auto result = conv16.from_bytes(value);
+	
 	return result;
 }
 
 string Red::ToString(wchar_t const * value)
 {
-	// make sure to pass the size in BYTES.
 	PF_ASSERT(value);
-	size_t len = wcslen(value) * sizeof(wchar_t);
-	auto result = string(len+1, '_');
-	FormatString(result, "%ls", value);
-	//PF_VERIFY_N((size_t)-1, wcstombs(&result[0], value, len));
-	//PF_VERIFY_N(-1, details::unsafe_format_buffer(&result[0], result.size(), "%ls", value));
-	if (!result.back()) result.pop_back();
+
+	StrConverter conv16;
+	auto result = conv16.to_bytes(value);
+
 	return result;
 }
+#endif // __GNUG__
 
-
-#endif // _MSC_VER
 
 
 string Red::ToString(float const value, unsigned const precision)

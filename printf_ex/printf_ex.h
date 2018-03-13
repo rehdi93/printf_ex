@@ -7,6 +7,11 @@
 #include <cstdio>
 #include <string>
 #include <type_traits>
+
+#ifdef __GNUG__
+#include <locale>
+#endif // __GNUG__
+
 #include "printf_ex_details.h"
 #include "debug.h"
 
@@ -99,11 +104,16 @@ namespace Red
 	template<class Tchar, class ... Args>
 	void Printl(std::basic_string<Tchar> const & format, Args const & ... args) noexcept
 	{
+		//details::_printing(format.c_str(), args...);
+		
 		if (std::is_same<Tchar, char>())
+		{
 			details::_printing(format.c_str(), EndL_t<char>("\n"), args ...);
+		}
 		else
+		{
 			details::_printing(format.c_str(), EndL_t<wchar_t>(L"\n"), args ...);
-
+		}
 	}
 
 	inline void Printl(wchar_t const * const value) noexcept

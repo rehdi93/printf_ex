@@ -269,3 +269,5 @@ gcc/*.h
 gcc/*.cpp
 gcc/*.exe
 gcc/*.Lnk
+*.stackdump
+*.bpts
