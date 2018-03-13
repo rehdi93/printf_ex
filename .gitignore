@@ -260,4 +260,12 @@ paket-files/
 __pycache__/
 *.pyc
 
+# my stuff:
+
 IGNORE/
+
+# except for build.sh, everything in the gcc is a temp
+gcc/*.h
+gcc/*.cpp
+gcc/*.exe
+gcc/*.Lnk
