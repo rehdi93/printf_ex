@@ -131,11 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="csafeimpl.cpp" />
     <ClCompile Include="sample.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="csafeimpl.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
