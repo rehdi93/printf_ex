@@ -6,7 +6,6 @@
 
 #include <cstdio>
 #include <string>
-#include <type_traits>
 
 #ifdef __GNUG__
 #include <locale>
@@ -82,38 +81,19 @@ namespace Red
 	template <typename ... Args>
 	void Printl(char const * format, Args const & ... args) noexcept
 	{
-		//char tmp[_FmtSize + 2];
-		//strcpy_s(tmp, format);
-		//strcat_s(tmp, "\n");
-		//details::_printing(tmp, args ...);
-
 		Print(format, args...); Print("\n");
 	}
 
 	template <typename ... Args>
 	void Printl(wchar_t const * format, Args const & ... args) noexcept
 	{
-		/*wchar_t tmp[_FmtSize + 2];
-		wcscpy_s(tmp, format);
-		wcscat_s(tmp, L"\n");
-		details::_printing(tmp, args ...);*/
-		
 		Print(format, args...); Print(L"\n");
 	}
 
 	template<class Tchar, class ... Args>
 	void Printl(std::basic_string<Tchar> const & format, Args const & ... args) noexcept
 	{
-		//details::_printing(format.c_str(), args...);
-		
-		if (std::is_same<Tchar, char>())
-		{
-			details::_printing(format.c_str(), EndL_t<char>("\n"), args ...);
-		}
-		else
-		{
-			details::_printing(format.c_str(), EndL_t<wchar_t>(L"\n"), args ...);
-		}
+		Printl(format.c_str(), args...);
 	}
 
 	inline void Printl(wchar_t const * const value) noexcept

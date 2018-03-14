@@ -78,7 +78,8 @@ namespace details {
 		return snprintf(nullptr, 0, format, PrintArg(args) ...);
 	}
 
-	// sadly, there is no standard wide char alternative to snprintf for wide chars, so I made my own
+	// sadly, there is no standard wide char alternative to snprintf D:
+	// brute force untill swprintf spits out a number we can use
 	template<typename ... Args>
 	int get_required_size(wchar_t const * const format, Args const & ... args)
 	{

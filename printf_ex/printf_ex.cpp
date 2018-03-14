@@ -60,7 +60,10 @@ struct codecvt : public std::codecvt<I, E, S>
 	~codecvt() {}
 };
 
-using StrConverter = std::wstring_convert<codecvt<wchar_t, char, std::mbstate_t>>;
+using char16_cvt = codecvt<char16_t, char, std::mbstate_t>;
+using wchar_cvt = codecvt<wchar_t, char, std::mbstate_t>;
+
+using StrConverter = std::wstring_convert<wchar_cvt>;
 
 
 wstring Red::ToWideString(char const * value)

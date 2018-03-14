@@ -1,14 +1,19 @@
 #include "../printf_ex/printf_ex.h"
 #include <array>
-#include <codecvt>
+#include <random>
 
 #if defined _MSC_VER
+	#define FMT_WC_B4 L"- Before:\t%s"
+	#define FMT_WC_AFTER L"- After:\t%s"
 	#define FMT_NARROW_STR_IN_WIDE L"%S"
 	#define TPS_REPORTS_W L"Tps Reports:\n%d) %s\n%d) %s %.2f"
 #elif defined __GNUG__
+	#define FMT_WC_B4 L"- Before:\t%ls"
+	#define FMT_WC_AFTER L"- After:\t%ls"
+
 	#define FMT_NARROW_STR_IN_WIDE L"%s"
 	#define TPS_REPORTS_W L"Tps Reports:\n%d) %ls\n%d) %ls %.2f"
-	#include "csafeimpl.h"
+	//#include "csafeimpl.h"
 #endif // _MSC_VER
 
 #define RAW_BUFFER 256
@@ -20,6 +25,8 @@ using std::string;
 using std::wstring;
 using std::array;
 using namespace std::string_literals;
+
+
 
 void TestRun()
 {
@@ -45,7 +52,7 @@ void TestRun()
 
 	Printl(SEP + " ToString " + SEP);
 	
-	Print("\nPrinting numerics w/ ToString", Endl('\n',2));
+	Print("\nPrinting numerics w/ ToString", endline(2));
 
 	string expected = "123.46";
 	string actual = ToString(123.457, 2);
@@ -65,7 +72,7 @@ void TestRun()
 	auto wcBefore = L"The wide cháràcter fõx jumpêd over the lazy dog.";
 	auto strAfter = ToString(wcBefore);
 
-	Printl(L"- Before:\t%ls", wcBefore);
+	Printl(FMT_WC_B4, wcBefore);
 	Printl("- After:\t%s", strAfter);
 
 	Print("\n");
@@ -76,7 +83,7 @@ void TestRun()
 	auto wstrAfter = ToWideString(cBefore);
 
 	Printl("- Before:\t%s", cBefore);
-	Printl(L"- After:\t%ls", wstrAfter);
+	Printl(FMT_WC_AFTER, wstrAfter);
 
 	Print("\n");
 	Printl(SEP + " Padding " + SEP);
@@ -91,18 +98,21 @@ void TestRun()
 	};
 
 	Printl("SALES REPORT\n");
+
+	std::random_device rd;
+	std::minstd_rand rng(rd());
+	std::uniform_int_distribution<int> uni(0, 0x7fff);
+
 	for (size_t i = 0; i < saleReps.size(); i++)
 	{
-		int salesNum = rand();
-
-		Print("%-10s", saleReps[i]);
-		Printl("%d items", salesNum);
+		int salesNum = uni(rng);
+		Printl("%-10s%8d %s", saleReps[i], salesNum, "items");
 	}
 
 	Print("\n\n");
 
 	Printl(SEP + " FormatString and FormatBuffer " + SEP);
-	Printl("Use FormatString to formating a message to a std::string!");
+	Printl("Use FormatString to format a message to a std::string!");
 	Print("\n\n");
 
 	Print("Utf8:", endline(2));
@@ -145,8 +155,8 @@ int main()
 	setlocale(LC_ALL, "");
 
 	Printl("Local Env:");
-	Printl("%3s%c %15s", "LC_ALL", ':', setlocale(LC_ALL, nullptr));
-	Printl("%3s%c %15s", "LC_CTYPE", ':', setlocale(LC_CTYPE, nullptr));
+	Printl("  %3s%c %15s", "LC_ALL", ':', setlocale(LC_ALL, nullptr));
+	Printl("  %3s%c %15s", "LC_CTYPE", ':', setlocale(LC_CTYPE, nullptr));
 
 #if defined __GNUG__
 

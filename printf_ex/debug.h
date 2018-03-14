@@ -1,8 +1,6 @@
 #pragma once
 // Printf_ex debug header
 
-
-
 #ifdef _DEBUG
 	#ifdef _MSC_VER
 		#include <crtdbg.h>
