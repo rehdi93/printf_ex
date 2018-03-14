@@ -111,7 +111,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="debug.h" />
+    <ClInclude Include="pfex_debug.h" />
     <ClInclude Include="printf_ex_details.h" />
     <ClInclude Include="printf_ex.h" />
     <ClInclude Include="printf_ex_types.h" />

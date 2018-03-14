@@ -2,9 +2,9 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="printf_ex.h" />
-    <ClInclude Include="debug.h" />
     <ClInclude Include="printf_ex_details.h" />
     <ClInclude Include="printf_ex_types.h" />
+    <ClInclude Include="pfex_debug.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="printf_ex.cpp" />

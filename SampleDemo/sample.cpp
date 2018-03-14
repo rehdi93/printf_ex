@@ -166,5 +166,13 @@ int main()
 	
 	TestRun();
 
+	//char badbuff[150];
+	//auto r1 = FormatBuffer(badbuff, 150, "%s\n%d", lorem_ipsum, 42);
+
+	//wchar_t badbuffwide[150];
+	//auto r2 = FormatBuffer(badbuffwide, 150, L"%S\n%d", lorem_ipsum, 42);
+
+
+
 	return 0;
 }

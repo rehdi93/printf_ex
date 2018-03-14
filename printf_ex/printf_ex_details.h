@@ -4,12 +4,8 @@
 #include <cstdio>
 #include <stdexcept>
 #include <string>
-#include "debug.h"
+#include "pfex_debug.h"
 #include "printf_ex_types.h"
-
-#ifndef _MSC_VER
-#include <string.h>
-#endif // !_MSC_VER
 
 
 namespace Red {
@@ -79,7 +75,7 @@ namespace details {
 	}
 
 	// sadly, there is no standard wide char alternative to snprintf D:
-	// brute force untill swprintf spits out a number we can use
+	// brute force until swprintf spits out a number we can use
 	template<typename ... Args>
 	int get_required_size(wchar_t const * const format, Args const & ... args)
 	{
@@ -103,15 +99,6 @@ namespace details {
 	}
 #endif // _MSC_VER 
 
-
-
-	inline void ensure_valid_fmt_result(int fmtResult)
-	{
-		if (fmtResult == -1)
-		{
-			throw std::runtime_error("Failed to format buffer, check your arguments.");
-		}
-	}
 
 }
 }

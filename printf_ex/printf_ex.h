@@ -6,14 +6,11 @@
 
 #include <cstdio>
 #include <string>
-
 #ifdef __GNUG__
 #include <locale>
 #endif // __GNUG__
 
 #include "printf_ex_details.h"
-#include "debug.h"
-
 
 namespace Red
 {
@@ -113,7 +110,7 @@ namespace Red
 	}
 
 	//
-	// Format... - Build formated text
+	// FormatString / FormatBuffer - Build formated text
 	//
 
 	// Write a formated message to a buffer
@@ -121,19 +118,30 @@ namespace Red
 	int FormatBuffer(Tchar * const buffer, size_t const bufferCount,
 					 Tchar const * const format, Args const & ... args)
 	{
+		PF_ASSERT(buffer && format); // buffer and format must not be null
+		if (!buffer)
+		{
+			throw std::invalid_argument("'buffer' cannot be null");
+		}
+		if (!format)
+		{
+			throw std::invalid_argument("'format' cannot be null");
+		}
+
 		int const result = details::unsafe_format_buffer(buffer, bufferCount,
 														 format, args...);
-		PF_ASSERT(result != -1);
-		details::ensure_valid_fmt_result(result);
+
+		PF_ASSERT(result != -1 && result < (int)bufferCount); // formating was not sucessefull
+		if (result == -1)
+		{
+			throw std::runtime_error("Failed to format buffer, check your arguments.");
+		}
+		if (result >= (int)bufferCount)
+		{
+			throw std::runtime_error("Failed to format buffer, result was truncated.");
+		}
 
 		return result;
-	}
-
-	template <typename Tchar, size_t _BufferSize, typename ... Args>
-	int FormatBuffer(Tchar const (&buffer)[_BufferSize],
-					 Tchar const * const format, Args const & ... args)
-	{
-		return FormatBuffer(buffer, _BufferSize, format, args ...);
 	}
 
 	// Write a formated message to a string
@@ -150,7 +158,6 @@ namespace Red
 		}
 
 		PF_ASSERT(size != -1);
-		details::ensure_valid_fmt_result(size);
 
 		if (static_cast<size_t>(size) > buffer.size())
 		{
@@ -164,6 +171,7 @@ namespace Red
 		
 		return size;
 	}
+
 
 	//
 	// ToString - Helper functions to simplify formating
