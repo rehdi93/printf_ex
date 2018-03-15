@@ -60,10 +60,6 @@ void TestRun()
 	//PF_ASSERT(expected == actual);
 	Printl("Ok!");
 
-
-	auto number = rand() / 2.3;
-	Printl("A number is %s", ToString(number, 4));
-
 	Print("\n");
 	
 	auto wcBefore = L"The wide cháràcter fõx jumpêd over the lazy dog.";
