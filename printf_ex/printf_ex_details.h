@@ -12,7 +12,7 @@ namespace Red {
 namespace details {
 
 	template<typename ... Args>
-	void _printing(char const * format, EndL_t<char> endl, Args const & ... args)
+	void internal_print(char const * format, EndL_t<char> endl, Args const & ... args)
 	{
 		std::string tmp(format);
 		tmp += endl();
@@ -21,7 +21,7 @@ namespace details {
 	}
 
 	template<typename ... Args>
-	void _printing(wchar_t const * format, EndL_t<wchar_t> endl, Args const & ... args)
+	void internal_print(wchar_t const * format, EndL_t<wchar_t> endl, Args const & ... args)
 	{
 		std::wstring tmp(format);
 		tmp += endl();
@@ -30,27 +30,27 @@ namespace details {
 	}
 
 	template<typename ... Args>
-	void _printing(char const * format, Args const & ... args)
+	void internal_print(char const * format, Args const & ... args)
 	{
 		printf(format, PrintArg(args) ...);
 	}
 
 	template<typename ... Args>
-	void _printing(wchar_t const * format, Args const & ... args)
+	void internal_print(wchar_t const * format, Args const & ... args)
 	{
 		wprintf(format, PrintArg(args) ...);
 	}
 
 	template<typename ... Args>
-	int unsafe_format_buffer(char * const buffer, size_t const bufferLen,
-							 char const * const format, Args const & ... args) noexcept
+	int internal_format_buffer(char * const buffer, size_t const bufferLen,
+							   char const * const format, Args const & ... args) noexcept
 	{
 		return snprintf(buffer, bufferLen, format, PrintArg(args) ...);
 	}
 
 	template<typename ... Args>
-	int unsafe_format_buffer(wchar_t * const buffer, size_t const bufferLen,
-							 wchar_t const * const format, Args const & ... args) noexcept
+	int internal_format_buffer(wchar_t * const buffer, size_t const bufferLen,
+							   wchar_t const * const format, Args const & ... args) noexcept
 	{
 		return swprintf(buffer, bufferLen, format, PrintArg(args) ...);
 	}

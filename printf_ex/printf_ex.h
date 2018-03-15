@@ -23,13 +23,13 @@ namespace Red
 	template <typename Tchar, class ... Args>
 	void Print(Tchar const * format, Args const & ... args) noexcept
 	{
-		details::_printing(format, args ...);
+		details::internal_print(format, args ...);
 	}
 
 	template<typename Tchar, class ... Args>
 	void Print(Tchar const * format, EndL_t<Tchar> const & endl, Args const & ... args) noexcept
 	{
-		details::_printing(format, endl, args ...);
+		details::internal_print(format, endl, args ...);
 	}
 
 	inline void Print(char const * const value) noexcept
@@ -129,8 +129,8 @@ namespace Red
 			throw std::invalid_argument("'format' cannot be null");
 		}
 
-		int const result = details::unsafe_format_buffer(buffer, bufferCount,
-														 format, args...);
+		int const result = details::internal_format_buffer(buffer, bufferCount,
+														   format, args...);
 
 		PF_ASSERT(result != -1 && (size_t)result < bufferCount); // formating was not sucessefull
 		if (result == -1)
@@ -150,15 +150,15 @@ namespace Red
 	int FormatString(std::basic_string<Tchar> & buffer,
 					 Tchar const * const format, Args const & ... args)
 	{
-		int size = details::unsafe_format_buffer(&buffer[0], buffer.size() + 1, 
-												 format, args ...);
+		int size = details::internal_format_buffer(&buffer[0], buffer.size() + 1, 
+												   format, args ...);
 		
 		if (size == -1)
 		{
 			size = details::get_required_size(format, args ...);
 		}
 
-		PF_ASSERT(size != -1);
+		PF_ASSERT(size != -1); // get_required_size should never fail
 		auto sizeU = static_cast<size_t>(size);
 
 		if (sizeU > buffer.size())
