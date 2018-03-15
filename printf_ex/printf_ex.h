@@ -3,10 +3,10 @@
 // made by: Pedro Oliva Rodriges
 // ref: https://msdn.microsoft.com/magazine/dn913181
 
-//#define __GNUG__ 3
 
 #include <cstdio>
 #include <string>
+#include <stdexcept>
 #ifdef __GNUG__
 #include <locale>
 #endif // __GNUG__
@@ -163,12 +163,12 @@ namespace Red
 
 		if (sizeU > buffer.size())
 		{
-			buffer.resize(size);
+			buffer.resize(sizeU);
 			FormatBuffer(&buffer[0], buffer.size() + 1, format, args ...);
 		}
 		else if (sizeU < buffer.size())
 		{
-			buffer.resize(size);
+			buffer.resize(sizeU);
 		}
 		
 		return size;

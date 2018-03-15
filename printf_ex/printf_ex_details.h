@@ -2,17 +2,18 @@
 // Printf_ex internals
 
 #include <cstdio>
-#include <stdexcept>
 #include <string>
 #include "pfex_debug.h"
 #include "printf_ex_types.h"
 
+//#define __GNUG__ 3
+//#undef _MSC_VER
 
 namespace Red {
 namespace details {
 
 	template<typename ... Args>
-	void internal_print(char const * format, EndL_t<char> endl, Args const & ... args)
+	void internal_print(char const * format, EndL_t<char> const & endl, Args const & ... args)
 	{
 		std::string tmp(format);
 		tmp += endl();
@@ -21,7 +22,7 @@ namespace details {
 	}
 
 	template<typename ... Args>
-	void internal_print(wchar_t const * format, EndL_t<wchar_t> endl, Args const & ... args)
+	void internal_print(wchar_t const * format, EndL_t<wchar_t> const & endl, Args const & ... args)
 	{
 		std::wstring tmp(format);
 		tmp += endl();
@@ -79,21 +80,17 @@ namespace details {
 	template<typename ... Args>
 	int get_required_size(wchar_t const * const format, Args const & ... args)
 	{
-		int result = -1;
-
-		for (size_t i = 1, dummySize = 256, increment = 64;
-			 result == -1;
-			 dummySize += increment)
+		int result = 0;
+		size_t i = 1, dummySize = 256, increment = 64;
+		do
 		{
-			if (i % 10 == 0)
-			{
-				increment *= 2;
-			}
-
 			wchar_t * dummy = new wchar_t[dummySize];
-			result = swprintf(dummy, dummySize, format, PrintArg(args) ...);
+			result = swprintf(dummy, dummySize, format, PrintArg(args)...);
 			delete[] dummy;
-		}
+
+			i++; dummySize += increment; if (i % 10 == 0) increment *= 2;
+		} 
+		while (result == -1);
 
 		return result;
 	}

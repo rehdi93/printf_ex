@@ -168,6 +168,5 @@ int main()
 	//auto r2 = FormatBuffer(badbuffwide, 150, L"%S\n%d", lorem_ipsum, 42);
 
 
-
 	return 0;
 }

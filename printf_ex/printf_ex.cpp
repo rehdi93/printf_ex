@@ -3,7 +3,6 @@
 using std::string;
 using std::wstring;
 using std::basic_string;
-using std::is_same;
 
 
 template<class Tnum>

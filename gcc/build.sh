@@ -16,8 +16,14 @@ cp `find $PF_Path -iname '*.cpp'` . &> /dev/null
 cp `find $Sample_Path -iname '*.h'` . &> /dev/null
 cp `find $Sample_Path -iname '*.cpp'` . &> /dev/null
 
+# echo `find $PF_Path/*.{h,cpp}`
+# echo `find $Sample_Path/*.{h,cpp}`
+
+#pfcp="${PF_Path}/*.{h,cpp}"
+#scp="${Sample_Path}/*.{h,cpp}"
+
 # remove old exe
-rm $exe_name
+rm $exe_name &> /dev/null
 
 echo $CC
 $CC

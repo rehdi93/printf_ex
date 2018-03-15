@@ -16,11 +16,11 @@
 
 #else
 
-#ifdef _MSC_VER
-	#define PF_ASSERT __noop
-#else
-	#define PF_ASSERT(ignore) ((void)0)
-#endif // _MSC_VER
+	#ifdef _MSC_VER
+		#define PF_ASSERT __noop
+	#else
+		#define PF_ASSERT(ignore) ((void)0)
+	#endif // _MSC_VER
 
 	#define PF_VERIFY(expression) (expression)
 	#define PF_VERIFY_(result, expression) (expression)
