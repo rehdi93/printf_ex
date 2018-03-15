@@ -5,13 +5,12 @@
 #if defined _MSC_VER
 	#define FMT_WC_B4 L"- Before:\t%s"
 	#define FMT_WC_AFTER L"- After:\t%s"
-	#define FMT_NARROW_STR_IN_WIDE L"%S"
+	#define FMT_STR_IN_WIDE L"%S"
 	#define TPS_REPORTS_W L"Tps Reports:\n%d) %s\n%d) %s %.2f"
 #elif defined __GNUG__
 	#define FMT_WC_B4 L"- Before:\t%ls"
 	#define FMT_WC_AFTER L"- After:\t%ls"
-
-	#define FMT_NARROW_STR_IN_WIDE L"%s"
+	#define FMT_STR_IN_WIDE L"%s"
 	#define TPS_REPORTS_W L"Tps Reports:\n%d) %ls\n%d) %ls %.2f"
 	//#include "csafeimpl.h"
 #endif // _MSC_VER
@@ -67,10 +66,13 @@ void TestRun()
 
 	Print("\n");
 	
-	Printl("wchar_t * to string:");
-
 	auto wcBefore = L"The wide cháràcter fõx jumpêd over the lazy dog.";
+	auto cBefore = "The wide cháràcter fõx jumpêd over the lazy dog.";
+	
 	auto strAfter = ToString(wcBefore);
+	auto wstrAfter = ToWideString(cBefore);
+
+	Printl("wchar_t * to string:");
 
 	Printl(FMT_WC_B4, wcBefore);
 	Printl("- After:\t%s", strAfter);
@@ -79,8 +81,6 @@ void TestRun()
 
 	Printl("char * to wstring:");
 
-	const char * cBefore = "The wide cháràcter fõx jumpêd over the lazy dog.";
-	auto wstrAfter = ToWideString(cBefore);
 
 	Printl("- Before:\t%s", cBefore);
 	Printl(FMT_WC_AFTER, wstrAfter);
@@ -136,7 +136,7 @@ void TestRun()
 	Print("Or, if you need to format a c-style string, use FormatBuffer", endline(2));
 
 	wchar_t customfmtraw[RAW_BUFFER];
-	FormatBuffer(customfmtraw, RAW_BUFFER, FMT_NARROW_STR_IN_WIDE, lorem_ipsum);
+	FormatBuffer(customfmtraw, RAW_BUFFER, FMT_STR_IN_WIDE, lorem_ipsum);
 
 	Printl("%ls", customfmtraw);
 
@@ -158,11 +158,6 @@ int main()
 	Printl("  %3s%c %15s", "LC_ALL", ':', setlocale(LC_ALL, nullptr));
 	Printl("  %3s%c %15s", "LC_CTYPE", ':', setlocale(LC_CTYPE, nullptr));
 
-#if defined __GNUG__
-
-#elif defined _MSC_VER
-	system("chcp 65001");
-#endif // __GNUG__
 	
 	TestRun();
 

@@ -4,17 +4,22 @@ PF_Path="${SolutionDir}/printf_ex"
 Sample_Path="${SolutionDir}/SampleDemo"
 exe_name="sample.exe"
 
+[[ "$1" = "/?" ]] && echo build.sh [additional g++ args...] && exit 0
+
+CC="g++ *.cpp -Wall -o $exe_name $*"
+
 echo Executing build script
 
 # copy souces to this dir
-cp `find $PF_Path -iname '*.h'` .
-cp `find $PF_Path -iname '*.cpp'` .
-cp `find $Sample_Path -iname '*.h'` .
-cp `find $Sample_Path -iname '*.cpp'` .
+cp `find $PF_Path -iname '*.h'` . &> /dev/null
+cp `find $PF_Path -iname '*.cpp'` . &> /dev/null
+cp `find $Sample_Path -iname '*.h'` . &> /dev/null
+cp `find $Sample_Path -iname '*.cpp'` . &> /dev/null
 
 # remove old exe
 rm $exe_name
 
-g++ *.cpp -Wall -g -D _DEBUG -o $exe_name
+echo $CC
+$CC
 
 find $exe_name

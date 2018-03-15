@@ -54,24 +54,27 @@ string Red::ToString(wchar_t const * value)
 
 #ifdef __GNUG__
 
-template<class I, class E, class S>
-struct codecvt : public std::codecvt<I, E, S>
+template<class Facet>
+struct deletable_facet : Facet
 {
-	~codecvt() {}
+	template<class ...Args>
+	deletable_facet(Args&& ...args) : Facet(std::forward<Args>(args)...) {}
+	~deletable_facet() {}
 };
 
-using char16_cvt = codecvt<char16_t, char, std::mbstate_t>;
-using wchar_cvt = codecvt<wchar_t, char, std::mbstate_t>;
+//using char16_cvt = deletable_facet<std::codecvt<char16_t, char, std::mbstate_t>>;
+using wchar_cvt = deletable_facet<std::codecvt<wchar_t, char, std::mbstate_t>>;
 
 using StrConverter = std::wstring_convert<wchar_cvt>;
-
+//using StrConverter16 = std::wstring_convert<char16_cvt, char16_t>;
+	
 
 wstring Red::ToWideString(char const * value)
 {
 	PF_ASSERT(value);
 
-	StrConverter conv16;
-	auto result = conv16.from_bytes(value);
+	StrConverter conv;
+	auto result = conv.from_bytes(value);
 	
 	return result;
 }
@@ -80,8 +83,8 @@ string Red::ToString(wchar_t const * value)
 {
 	PF_ASSERT(value);
 
-	StrConverter conv16;
-	auto result = conv16.to_bytes(value);
+	StrConverter conv;
+	auto result = conv.to_bytes(value);
 
 	return result;
 }

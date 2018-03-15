@@ -1,8 +1,9 @@
 #pragma once
 // Printf_ex main header
 // made by: Pedro Oliva Rodriges
-
 // ref: https://msdn.microsoft.com/magazine/dn913181
+
+//#define __GNUG__ 3
 
 #include <cstdio>
 #include <string>
@@ -131,12 +132,12 @@ namespace Red
 		int const result = details::unsafe_format_buffer(buffer, bufferCount,
 														 format, args...);
 
-		PF_ASSERT(result != -1 && result < (int)bufferCount); // formating was not sucessefull
+		PF_ASSERT(result != -1 && (size_t)result < bufferCount); // formating was not sucessefull
 		if (result == -1)
 		{
 			throw std::runtime_error("Failed to format buffer, check your arguments.");
 		}
-		if (result >= (int)bufferCount)
+		if (static_cast<size_t>(result) >= bufferCount)
 		{
 			throw std::runtime_error("Failed to format buffer, result was truncated.");
 		}
@@ -158,13 +159,14 @@ namespace Red
 		}
 
 		PF_ASSERT(size != -1);
+		auto sizeU = static_cast<size_t>(size);
 
-		if (static_cast<size_t>(size) > buffer.size())
+		if (sizeU > buffer.size())
 		{
 			buffer.resize(size);
 			FormatBuffer(&buffer[0], buffer.size() + 1, format, args ...);
 		}
-		else if (static_cast<size_t>(size) < buffer.size())
+		else if (sizeU < buffer.size())
 		{
 			buffer.resize(size);
 		}
@@ -182,6 +184,7 @@ namespace Red
 
 	// Converts a null-terminated char* string to a std::wstring
 	std::wstring ToWideString(char const * value);
+
 
 
 	std::string ToString(float const value, unsigned const precision);
