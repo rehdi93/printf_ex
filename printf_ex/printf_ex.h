@@ -116,8 +116,8 @@ namespace Red
 
 	// Write a formated message to a buffer
 	template <typename Tchar, typename ... Args>
-	int FormatBuffer(Tchar * const buffer, size_t const bufferCount,
-					 Tchar const * const format, Args const & ... args)
+	void FormatBuffer(Tchar * const buffer, size_t const bufferCount,
+					  Tchar const * const format, Args const & ... args)
 	{
 		PF_ASSERT(buffer && format); // buffer and format must not be null
 		if (!buffer)
@@ -132,7 +132,7 @@ namespace Red
 		int const result = details::internal_format_buffer(buffer, bufferCount,
 														   format, args...);
 
-		PF_ASSERT(result != -1 && (size_t)result < bufferCount); // formating was not sucessefull
+		PF_ASSERT(result != -1 && (size_t)result < bufferCount); // formating was not sucessfull
 		if (result == -1)
 		{
 			throw std::runtime_error("Failed to format buffer, check your arguments.");
@@ -141,14 +141,12 @@ namespace Red
 		{
 			throw std::runtime_error("Failed to format buffer, result was truncated.");
 		}
-
-		return result;
 	}
 
 	// Write a formated message to a string
 	template <typename Tchar, typename ... Args>
-	int FormatString(std::basic_string<Tchar> & buffer,
-					 Tchar const * const format, Args const & ... args)
+	void FormatString(std::basic_string<Tchar> & buffer,
+					  Tchar const * const format, Args const & ... args)
 	{
 		int size = details::internal_format_buffer(&buffer[0], buffer.size() + 1, 
 												   format, args ...);
@@ -170,8 +168,6 @@ namespace Red
 		{
 			buffer.resize(sizeU);
 		}
-		
-		return size;
 	}
 
 

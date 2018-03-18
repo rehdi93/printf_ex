@@ -75,22 +75,15 @@ namespace details {
 		return snprintf(nullptr, 0, format, PrintArg(args) ...);
 	}
 
-	// sadly, there is no standard wide char alternative to snprintf D:
-	// brute force until swprintf spits out a number we can use
 	template<typename ... Args>
 	int get_required_size(wchar_t const * const format, Args const & ... args)
 	{
-		int result = 0;
-		size_t i = 1, dummySize = 256, increment = 64;
-		do
-		{
-			wchar_t * dummy = new wchar_t[dummySize];
-			result = swprintf(dummy, dummySize, format, PrintArg(args)...);
-			delete[] dummy;
+		// open a noop FILE stream
+		FILE * noop = fopen("/dev/null", "w");
+		if (!noop) noop = fopen("nul", "w");
 
-			i++; dummySize += increment; if (i % 10 == 0) increment *= 2;
-		} 
-		while (result == -1);
+		int result = fwprintf(noop, format, PrintArg(args) ...);
+		fclose(noop);
 
 		return result;
 	}

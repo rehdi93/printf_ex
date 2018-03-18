@@ -3,16 +3,15 @@
 #include <random>
 
 #if defined _MSC_VER
-	#define FMT_WC_B4 L"- Before:\t%s"
-	#define FMT_WC_AFTER L"- After:\t%s"
+	#define FMT_WC_B4		L"- Before:\t%s"
+	#define FMT_WC_AFTER	L"- After:\t%s"
 	#define FMT_STR_IN_WIDE L"%S"
-	#define TPS_REPORTS_W L"Tps Reports:\n%d) %s\n%d) %s %.2f"
+	#define TPS_REPORTS_W	L"Tps Reports:\n%d) %s\n%d) %s %.2f"
 #elif defined __GNUG__
-	#define FMT_WC_B4 L"- Before:\t%ls"
-	#define FMT_WC_AFTER L"- After:\t%ls"
+	#define FMT_WC_B4		L"- Before:\t%ls"
+	#define FMT_WC_AFTER	L"- After:\t%ls"
 	#define FMT_STR_IN_WIDE L"%s"
-	#define TPS_REPORTS_W L"Tps Reports:\n%d) %ls\n%d) %ls %.2f"
-	//#include "csafeimpl.h"
+	#define TPS_REPORTS_W	L"Tps Reports:\n%d) %ls\n%d) %ls %.2f"
 #endif // _MSC_VER
 
 #define RAW_BUFFER 256
@@ -158,11 +157,19 @@ int main()
 	TestRun();
 
 	//char badbuff[150];
-	//auto r1 = FormatBuffer(badbuff, 150, "%s\n%d", lorem_ipsum, 42);
+	//FormatBuffer(badbuff, 150, "%s\n%d", lorem_ipsum, 42);
 
-	//wchar_t badbuffwide[150];
-	//auto r2 = FormatBuffer(badbuffwide, 150, L"%S\n%d", lorem_ipsum, 42);
+	//wchar_t badbuffwide[RAW_BUFFER];
+	//FormatBuffer(badbuffwide, RAW_BUFFER, L"%S\n%d", lorem_ipsum, 42);
 
+	auto req = details::get_required_size(FMT_STR_IN_WIDE, lorem_ipsum);
+	Printl("%d", req);
+
+	// TODO: test more asian chars
+	auto japa = L"菜祉視捌歯若";
+	req = details::get_required_size(L"%ls", japa);
+
+	Printl("%d", req);
 
 	return 0;
 }
