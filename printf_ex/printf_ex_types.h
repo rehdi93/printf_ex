@@ -26,12 +26,12 @@ namespace Red
 	using Endl = EndL_t<char>;
 	using wEndl = EndL_t<wchar_t>;
 
-	inline Endl endline(unsigned const newLines)
+	inline Endl newline(unsigned const newLines)
 	{
 		return Endl('\n', newLines);
 	}
 
-	inline wEndl wendline(unsigned const newLines)
+	inline wEndl wnewline(unsigned const newLines)
 	{
 		return wEndl(L'\n', newLines);
 	}

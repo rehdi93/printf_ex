@@ -17,13 +17,12 @@
 #define RAW_BUFFER 256
 
 auto lorem_ipsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus velit quam, consequat a hendrerit non, tempor in elit. Quisque eu risus at neque eleifend posuere sed id odio.";
+auto japa = L"菜祉視捌歯若";
 
 using namespace Red;
 using std::string;
 using std::wstring;
 using std::array;
-using namespace std::string_literals;
-
 
 
 void TestRun()
@@ -50,7 +49,7 @@ void TestRun()
 
 	Printl(SEP + " ToString " + SEP);
 	
-	Print("\nPrinting numerics w/ ToString", endline(2));
+	Print("\nPrinting numerics w/ ToString", newline(2));
 
 	string expected = "123.46";
 	string actual = ToString(123.457, 2);
@@ -110,15 +109,15 @@ void TestRun()
 	Printl("Use FormatString to format a message to a std::string!");
 	Print("\n\n");
 
-	Print("Utf8:", endline(2));
+	Print("Utf8:", newline(2));
 
 	string customFmt;
 	FormatString(customFmt, "Tps Reports:\n%d) %s\n%d) %s %.2f",
 				 1, "Needs a new tonner!",
 				 2, "Budget", 654.87452f);
 
-	Print(customFmt, endline(3));
-	Print("Utf16:", endline(2));
+	Print(customFmt, newline(3));
+	Print("Utf16:", newline(2));
 
 	wstring customFmtWide;
 	FormatString(customFmtWide, TPS_REPORTS_W,
@@ -128,7 +127,7 @@ void TestRun()
 	customFmtWide += L"\n\n\n";
 	Print(customFmtWide);
 
-	Print("Or, if you need to format a c-style string, use FormatBuffer", endline(2));
+	Print("Or, if you need to format a c-style string, use FormatBuffer", newline(2));
 
 	wchar_t customfmtraw[RAW_BUFFER];
 	FormatBuffer(customfmtraw, RAW_BUFFER, FMT_STR_IN_WIDE, lorem_ipsum);
@@ -141,35 +140,19 @@ void TestRun()
 	Printl(SEP + "Define a custom endline!" + SEP);
 
 	unsigned nlCount = 5;
-	Print("Printing %d new lines after this message", endline(nlCount), nlCount);
+	Print("Printing %d new lines after this message", newline(nlCount), nlCount);
 }
 
+//void TestBadBuffers()
+//{
+//	wchar_t badbuffwide[150];
+//	FormatBuffer(badbuffwide, 150, L"%S\n%d", lorem_ipsum, 42);
+//}
 
 int main()
 {
 	setlocale(LC_ALL, "");
-
-	Printl("Local Env:");
-	Printl("  %3s%c %15s", "LC_ALL", ':', setlocale(LC_ALL, nullptr));
-	Printl("  %3s%c %15s", "LC_CTYPE", ':', setlocale(LC_CTYPE, nullptr));
-
-	
 	TestRun();
-
-	//char badbuff[150];
-	//FormatBuffer(badbuff, 150, "%s\n%d", lorem_ipsum, 42);
-
-	//wchar_t badbuffwide[RAW_BUFFER];
-	//FormatBuffer(badbuffwide, RAW_BUFFER, L"%S\n%d", lorem_ipsum, 42);
-
-	auto req = details::get_required_size(FMT_STR_IN_WIDE, lorem_ipsum);
-	Printl("%d", req);
-
-	// TODO: test more asian chars
-	auto japa = L"菜祉視捌歯若";
-	req = details::get_required_size(L"%ls", japa);
-
-	Printl("%d", req);
-
+	//TestBadBuffers();
 	return 0;
 }

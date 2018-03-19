@@ -61,11 +61,9 @@ struct deletable_facet : Facet
 	~deletable_facet() {}
 };
 
-//using char16_cvt = deletable_facet<std::codecvt<char16_t, char, std::mbstate_t>>;
 using wchar_cvt = deletable_facet<std::codecvt<wchar_t, char, std::mbstate_t>>;
 
 using StrConverter = std::wstring_convert<wchar_cvt>;
-//using StrConverter16 = std::wstring_convert<char16_cvt, char16_t>;
 	
 
 wstring Red::ToWideString(char const * value)

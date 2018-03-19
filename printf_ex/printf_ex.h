@@ -119,7 +119,7 @@ namespace Red
 	void FormatBuffer(Tchar * const buffer, size_t const bufferCount,
 					  Tchar const * const format, Args const & ... args)
 	{
-		PF_ASSERT(buffer && format); // buffer and format must not be null
+		PF_ASSERT(buffer and format); // buffer and format must not be null
 		if (!buffer)
 		{
 			throw std::invalid_argument("'buffer' cannot be null");
@@ -132,7 +132,7 @@ namespace Red
 		int const result = details::internal_format_buffer(buffer, bufferCount,
 														   format, args...);
 
-		PF_ASSERT(result != -1 && (size_t)result < bufferCount); // formating was not sucessfull
+		PF_ASSERT(result != -1 and (size_t)result < bufferCount); // formating was not sucessfull
 		if (result == -1)
 		{
 			throw std::runtime_error("Failed to format buffer, check your arguments.");

@@ -76,7 +76,7 @@ namespace details {
 	}
 
 	template<typename ... Args>
-	int get_required_size(wchar_t const * const format, Args const & ... args)
+	int get_required_size(wchar_t const * const format, Args const & ... args) noexcept
 	{
 		// open a noop FILE stream
 		FILE * noop = fopen("/dev/null", "w");
