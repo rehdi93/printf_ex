@@ -129,7 +129,6 @@
     <ClInclude Include="pfex_debug.h" />
     <ClInclude Include="printf_ex_details.h" />
     <ClInclude Include="printf_ex.h" />
-    <ClInclude Include="printf_ex_types.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="printf_ex.cpp" />

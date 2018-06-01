@@ -4,32 +4,18 @@
 // ref: https://msdn.microsoft.com/magazine/dn913181
 
 
-#include <cstdio>
-#include <string>
-#include <stdexcept>
-#ifdef __GNUG__
-#include <locale>
-#endif // __GNUG__
-
 #include "printf_ex_details.h"
 
 namespace Red
 {
-
 	//
 	// Print - Wrappers around printf + some shortcuts
 	//
 
 	template <typename Tchar, class ... Args>
-	void Print(Tchar const * format, Args const & ... args) noexcept
+	inline void Print(Tchar const * format, Args const & ... args) noexcept
 	{
 		details::internal_print(format, args ...);
-	}
-
-	template<typename Tchar, class ... Args>
-	void Print(Tchar const * format, EndL_t<Tchar> const & endl, Args const & ... args) noexcept
-	{
-		details::internal_print(format, endl, args ...);
 	}
 
 	inline void Print(char const * const value) noexcept
@@ -37,39 +23,22 @@ namespace Red
 		Print("%s", value);
 	}
 
-	inline void Print(char const * value, EndL_t<char> const & endl) noexcept
-	{
-		Print("%s", endl, value);
-	}
-
 	inline void Print(wchar_t const * const value) noexcept
 	{
 		Print(L"%ls", value);
 	}
 
-	inline void Print(wchar_t const * value, EndL_t<wchar_t> const & endl) noexcept
-	{
-		Print(L"%ls", endl, value);
-	}
-
 
 	template <typename T>
-	void Print(std::basic_string<T> const & value) noexcept
+	inline void Print(std::basic_string<T> const & value) noexcept
 	{
 		Print(value.c_str());
 	}
 
 	template<class Tchar, class ... Args>
-	void Print(std::basic_string<Tchar> const & format, Args const & ... args) noexcept
+	inline void Print(std::basic_string<Tchar> const & format, Args const & ... args) noexcept
 	{
 		Print(format.c_str(), args ...);
-	}
-
-	template<class Tchar, class ... Args>
-	void Print(std::basic_string<Tchar> const & format, EndL_t<Tchar> const & endl,
-			   Args const & ... args) noexcept
-	{
-		Print(format.c_str(), endl, args ...);
 	}
 
 	//
@@ -77,19 +46,19 @@ namespace Red
 	//
 
 	template <typename ... Args>
-	void Printl(char const * format, Args const & ... args) noexcept
+	inline void Printl(char const * format, Args const & ... args) noexcept
 	{
 		Print(format, args...); Print("\n");
 	}
 
 	template <typename ... Args>
-	void Printl(wchar_t const * format, Args const & ... args) noexcept
+	inline void Printl(wchar_t const * format, Args const & ... args) noexcept
 	{
 		Print(format, args...); Print(L"\n");
 	}
 
 	template<class Tchar, class ... Args>
-	void Printl(std::basic_string<Tchar> const & format, Args const & ... args) noexcept
+	inline void Printl(std::basic_string<Tchar> const & format, Args const & ... args) noexcept
 	{
 		Printl(format.c_str(), args...);
 	}
@@ -105,7 +74,7 @@ namespace Red
 	}
 
 	template <typename T>
-	void Printl(std::basic_string<T> const & value) noexcept
+	inline void Printl(std::basic_string<T> const & value) noexcept
 	{
 		Printl(value.c_str());
 	}
@@ -116,36 +85,20 @@ namespace Red
 
 	// Write a formated message to a buffer
 	template <typename Tchar, typename ... Args>
-	void FormatBuffer(Tchar * const buffer, size_t const bufferCount,
+	inline void FormatBuffer(Tchar * const buffer, size_t const bufferCount,
 					  Tchar const * const format, Args const & ... args)
 	{
-		PF_ASSERT(buffer and format); // buffer and format must not be null
-		if (!buffer)
-		{
-			throw std::invalid_argument("'buffer' cannot be null");
-		}
-		if (!format)
-		{
-			throw std::invalid_argument("'format' cannot be null");
-		}
+		PF_ASSERT(buffer && format); // buffer and format must not be null
 
 		int const result = details::internal_format_buffer(buffer, bufferCount,
 														   format, args...);
 
-		PF_ASSERT(result != -1 and (size_t)result < bufferCount); // formating was not sucessfull
-		if (result == -1)
-		{
-			throw std::runtime_error("Failed to format buffer, check your arguments.");
-		}
-		if (static_cast<size_t>(result) >= bufferCount)
-		{
-			throw std::runtime_error("Failed to format buffer, result was truncated.");
-		}
+		PF_ASSERT(result != -1 && (size_t)result < bufferCount); // formating was not sucessfull
 	}
 
 	// Write a formated message to a string
 	template <typename Tchar, typename ... Args>
-	void FormatString(std::basic_string<Tchar> & buffer,
+	inline void FormatString(std::basic_string<Tchar> & buffer,
 					  Tchar const * const format, Args const & ... args)
 	{
 		int size = details::internal_format_buffer(&buffer[0], buffer.size() + 1, 
@@ -170,6 +123,15 @@ namespace Red
 		}
 	}
 
+	template <typename Tchar, typename ... Args>
+	inline auto FormatString(Tchar const * const format, Args const & ... args)
+	{
+		std::basic_string<Tchar> formated_str;
+		FormatString(formated_str, format, args ...);
+		return formated_str;
+	}
+
+#ifndef PFEX_HEADER_ONLY
 
 	//
 	// ToString - Helper functions to simplify formating
@@ -190,6 +152,8 @@ namespace Red
 	std::wstring ToWideString(float const value, unsigned const precision);
 
 	std::wstring ToWideString(double const value, unsigned const precision);
+
+#endif // !PFEX_HEADER_ONLY
 
 }
 

@@ -1,7 +1,7 @@
 #pragma once
 // Printf_ex debug header
 
-#ifdef _DEBUG
+#if defined(_DEBUG) and not defined(NDEBUG)
 	#ifdef _MSC_VER
 		#include <crtdbg.h>
 		#define PF_ASSERT _ASSERTE
@@ -26,4 +26,4 @@
 	#define PF_VERIFY_(result, expression)		(expression)
 	#define PF_VERIFY_N(badresult, expression)	(expression)
 
-#endif // _DEBUG
+#endif // _DEBUG && !NDEBUG

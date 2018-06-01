@@ -4,40 +4,32 @@
 #include <cstdio>
 #include <string>
 #include "pfex_debug.h"
-#include "printf_ex_types.h"
 
-//#define __GNUG__ 3
-//#undef _MSC_VER
+
+template<typename TVal>
+TVal PrintArg(TVal value) noexcept
+{
+	return value;
+}
+
+template<typename Tchar>
+Tchar const * PrintArg(std::basic_string<Tchar> const & value) noexcept
+{
+	return value.c_str();
+}
+
 
 namespace Red {
 namespace details {
 
 	template<typename ... Args>
-	void internal_print(char const * format, EndL_t<char> const & endl, Args const & ... args)
-	{
-		std::string tmp(format);
-		tmp += endl();
-
-		printf(tmp.c_str(), PrintArg(args) ...);
-	}
-
-	template<typename ... Args>
-	void internal_print(wchar_t const * format, EndL_t<wchar_t> const & endl, Args const & ... args)
-	{
-		std::wstring tmp(format);
-		tmp += endl();
-
-		wprintf(tmp.c_str(), PrintArg(args) ...);
-	}
-
-	template<typename ... Args>
-	void internal_print(char const * format, Args const & ... args)
+	void internal_print(char const * format, Args const & ... args) noexcept
 	{
 		printf(format, PrintArg(args) ...);
 	}
 
 	template<typename ... Args>
-	void internal_print(wchar_t const * format, Args const & ... args)
+	void internal_print(wchar_t const * format, Args const & ... args) noexcept
 	{
 		wprintf(format, PrintArg(args) ...);
 	}
@@ -79,13 +71,17 @@ namespace details {
 	int get_required_size(wchar_t const * const format, Args const & ... args) noexcept
 	{
 		// open a noop FILE stream
-		FILE * noop = fopen("/dev/null", "w");
-		if (!noop) noop = fopen("nul", "w");
+	#ifdef _WIN32
+		const char* null_dev = "nul";
+	#else
+		const char* null_dev = "/dev/null";
+	#endif // _WIN32
 
+		FILE * noop = fopen(null_dev, "w");
 		int result = fwprintf(noop, format, PrintArg(args) ...);
 		fclose(noop);
 
-		return result;
+		return result * sizeof(wchar_t);
 	}
 #endif // _MSC_VER 
 

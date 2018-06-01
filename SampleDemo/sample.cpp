@@ -49,7 +49,7 @@ void TestRun()
 
 	Printl(SEP + " ToString " + SEP);
 	
-	Print("\nPrinting numerics w/ ToString", newline(2));
+	Print("\nPrinting numerics w/ ToString\n\n");
 
 	string expected = "123.46";
 	string actual = ToString(123.457, 2);
@@ -109,15 +109,15 @@ void TestRun()
 	Printl("Use FormatString to format a message to a std::string!");
 	Print("\n\n");
 
-	Print("Utf8:", newline(2));
+	Print("Utf8:\n\n");
 
 	string customFmt;
 	FormatString(customFmt, "Tps Reports:\n%d) %s\n%d) %s %.2f",
 				 1, "Needs a new tonner!",
 				 2, "Budget", 654.87452f);
 
-	Print(customFmt, newline(3));
-	Print("Utf16:", newline(2));
+	Print(customFmt + "\n\n\n");
+	Print("Utf16:\n\n");
 
 	wstring customFmtWide;
 	FormatString(customFmtWide, TPS_REPORTS_W,
@@ -127,20 +127,12 @@ void TestRun()
 	customFmtWide += L"\n\n\n";
 	Print(customFmtWide);
 
-	Print("Or, if you need to format a c-style string, use FormatBuffer", newline(2));
+	Print("Or, if you need to format a c-style string, use FormatBuffer\n\n");
 
 	wchar_t customfmtraw[RAW_BUFFER];
 	FormatBuffer(customfmtraw, RAW_BUFFER, FMT_STR_IN_WIDE, lorem_ipsum);
 
 	Printl("%ls", customfmtraw);
-
-	Print("\n\n");
-
-
-	Printl(SEP + "Define a custom endline!" + SEP);
-
-	unsigned nlCount = 5;
-	Print("Printing %d new lines after this message", newline(nlCount), nlCount);
 }
 
 //void TestBadBuffers()

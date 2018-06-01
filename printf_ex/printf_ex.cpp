@@ -34,8 +34,7 @@ basic_string<Tchar> BufferToStr(Uchar const * value, size_t const len, Conversio
 	size_t n{};
 	basic_string<Tchar> result(len, 0);
 	PF_VERIFY_(0, convert(&n, &result[0], len, value, len - 1));
-	result.resize(n);
-	result.pop_back(); // remove extra null terminator
+	result.resize(n - 1); // remove extra null terminator
 	return result;
 }
 
